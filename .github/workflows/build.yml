@@ -36,10 +36,27 @@ jobs:
           npm install
           npm install react-native-webview react-native-device-info react-native-background-timer @react-native-community/netinfo
 
-      - name: Setup Gradle
+      - name: Generate Gradle Wrapper
         run: |
           cd android
+          curl -L -o gradle-wrapper.jar https://raw.githubusercontent.com/gradle/gradle/v8.4.0/gradle/wrapper/gradle-wrapper.jar
+          cat > gradlew << 'GRADLEW_EOF'
+#!/bin/sh
+APP_HOME=$( cd "${0%/*}" && pwd -P )
+CLASSPATH="$APP_HOME/gradle/wrapper/gradle-wrapper.jar"
+exec java -classpath "$CLASSPATH" org.gradle.wrapper.GradleWrapperMain "$@"
+GRADLEW_EOF
           chmod +x gradlew
+          mkdir -p gradle/wrapper
+          cat > gradle/wrapper/gradle-wrapper.properties << 'PROPS_EOF'
+distributionBase=GRADLE_USER_HOME
+distributionPath=wrapper/dists
+distributionUrl=https\://services.gradle.org/distributions/gradle-8.4-bin.zip
+networkTimeout=10000
+validateDistributionUrl=true
+zipStoreBase=GRADLE_USER_HOME
+zipStorePath=wrapper/dists
+PROPS_EOF
 
       - name: Build APK Debug
         run: |
