@@ -31,6 +31,16 @@ jobs:
       - name: Accept Android licenses
         run: yes | sdkmanager --licenses || true
 
+      - name: Install React Native CLI
+        run: npm install -g @react-native-community/cli
+
+      - name: Create React Native Project
+        run: |
+          npx react-native init TempProject --version 0.73.0
+          cp -r TempProject/android/* android/
+          cp TempProject/package.json .
+          rm -rf TempProject
+
       - name: Install dependencies
         run: |
           npm install
